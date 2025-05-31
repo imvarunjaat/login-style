@@ -1,4 +1,5 @@
-<html lang="en"><head>
+<html lang="en">
+<head>
   <meta charset="UTF-8">
   <title>Login</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -29,6 +30,8 @@
             <svg id="eyeOpen" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M1.458 12C2.732 7.943 6.522 5 12 5c5.478 0 9.268 2.943 10.542 7-1.274 4.057-5.064 7-10.542 7-5.478 0-9.268-2.943-10.542-7z" />
               <circle id="eyeball" cx="12" cy="12" r="3" stroke-width="1.7" stroke="currentColor" fill="currentColor"/>
+              <!-- Blinking eyelid (hidden by default) -->
+              <ellipse id="eyelid" cx="12" cy="12" rx="4.5" ry="2.8" fill="white" style="opacity:0; pointer-events:none;" />
             </svg>
             <!-- Eye Off (show password) -->
             <svg id="eyeOff" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -57,6 +60,7 @@
     const eyeOpen = document.getElementById('eyeOpen');
     const eyeOff = document.getElementById('eyeOff');
     const eyeball = document.getElementById('eyeball');
+    const eyelid = document.getElementById('eyelid');
 
     toggleBtn.addEventListener('click', function () {
       const isPassword = passwordInput.type === 'password';
@@ -80,5 +84,27 @@
         eyeball.setAttribute('cx', 12);
       }
     });
+
+    // Blinking logic
+    function blink() {
+      // Animate eyelid: close quickly, open after short delay
+      eyelid.style.transition = "opacity 60ms";
+      eyelid.style.opacity = 1;
+      setTimeout(() => {
+        eyelid.style.transition = "opacity 120ms";
+        eyelid.style.opacity = 0;
+        scheduleNextBlink();
+      }, 160 + Math.random() * 60); // Eyelid closed for 160-220ms (natural blink)
+    }
+    function scheduleNextBlink() {
+      const next = 3000 + Math.random() * 3000; // 3-6 seconds between blinks
+      setTimeout(() => {
+        // Only blink if eye is visible (not in eyeOff state)
+        if (!eyeOpen.classList.contains('hidden')) blink();
+        else scheduleNextBlink();
+      }, next);
+    }
+    scheduleNextBlink();
   </script>
-</body></html>
+</body>
+</html>
